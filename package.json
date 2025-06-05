@@ -2,7 +2,7 @@
   "name": "smart-agriculture-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://your-username.github.io/smart-agriculture-app",
+  "homepage": "https://Arkomustafi2.github.io/smartagri",
   "dependencies": {
     "firebase": "^10.7.1",
     "lucide-react": "^0.284.0",
