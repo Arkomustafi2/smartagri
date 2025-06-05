@@ -1,0 +1,17 @@
+ # Testing
+  /coverage
+
+  # Production
+  /build
+  /dist
+  /out
+
+  # Misc
+  .DS_Store
+  .env
+  .env.local
+  .npm
+  npm-debug.log*
+  yarn-debug.log*
+  yarn-error.log*
+  ```
