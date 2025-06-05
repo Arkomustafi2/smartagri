@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/smart-agriculture-app/static/css/main.6c849f44.css",
+    "main.js": "/smart-agriculture-app/static/js/main.c0b63753.js",
+    "index.html": "/smart-agriculture-app/index.html",
+    "main.6c849f44.css.map": "/smart-agriculture-app/static/css/main.6c849f44.css.map",
+    "main.c0b63753.js.map": "/smart-agriculture-app/static/js/main.c0b63753.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6c849f44.css",
+    "static/js/main.c0b63753.js"
+  ]
+}
