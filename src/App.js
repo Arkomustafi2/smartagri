@@ -465,35 +465,57 @@ const ResultPage = ({ onNavigate, isDarkMode, sensorData }) => {
         setSelectedCrop(event.target.value);
     };
 
-    const getGeminiResponse = async (prompt, type) => {
-        if (type === 'soilHealth') setLoadingSoilHealth(true);
-        if (type === 'cropPrediction') setLoadingCropPrediction(true);
+const getGeminiResponse = async (prompt, type) => {
+    if (type === 'soilHealth') setLoadingSoilHealth(true);
+    if (type === 'cropPrediction') setLoadingCropPrediction(true);
 
-        try {
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = "AIzaSyC_ZxGxwNik91RNuuQ15waG3Vo6lrefrQc";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const apiKey = "AIzaSyC_ZxGxwNik91RNuuQ15waG3Vo6lrefrQc"; // Replace this with a working Gemini API key
+    if (!apiKey || apiKey.includes("AIzaSyC_ZxGxwNik91RNuuQ15waG3Vo6lrefrQc")) {
+        console.error("Gemini API key is missing or invalid.");
+        if (type === 'soilHealth') setSoilHealthSuggestion("API key is missing.");
+        if (type === 'cropPrediction') setCropPrediction("API key is missing.");
+        return;
+    }
 
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+    try {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-            const result = await response.json();
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                const text = result.candidates[0].content.parts[0].text;
-                if (type === 'soilHealth') setSoilHealthSuggestion(text);
-                if (type === 'cropPrediction') setCropPrediction(text);
-            } else {
-                const errorMessage = "Failed to get suggestions. Please try again.";
-                if (type === 'soilHealth') setSoilHealthSuggestion(errorMessage);
-                if (type === 'cropPrediction') setCropPrediction(errorMessage);
-                console.error("Gemini API response structure unexpected:", result);
+        const payload = {
+            contents: [
+                {
+                    role: "user",
+                    parts: [{ text: prompt }]
+                }
+            ]
+        };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.status === 403) {
+            throw new Error("403 Forbidden: Check if your API key is valid and Gemini API is enabled in your Google Cloud project.");
+        }
+
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+
+        if (type === 'soilHealth') setSoilHealthSuggestion(text);
+        if (type === 'cropPrediction') setCropPrediction(text);
+    } catch (error) {
+        console.error("Gemini API error:", error);
+        const errorMessage = "Failed to fetch response from Gemini. Please check your API key and network.";
+        if (type === 'soilHealth') setSoilHealthSuggestion(errorMessage);
+        if (type === 'cropPrediction') setCropPrediction(errorMessage);
+    } finally {
+        if (type === 'soilHealth') setLoadingSoilHealth(false);
+        if (type === 'cropPrediction') setLoadingCropPrediction(false);
+    }
+};
+
             }
         } catch (error) {
             console.error("Error calling Gemini API:", error);
