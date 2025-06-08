@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/smartagri/static/css/main.6c849f44.css",
-    "main.js": "/smartagri/static/js/main.19696070.js",
+    "main.css": "/smartagri/static/css/main.8a7f4d26.css",
+    "main.js": "/smartagri/static/js/main.935c1a70.js",
     "index.html": "/smartagri/index.html",
-    "main.6c849f44.css.map": "/smartagri/static/css/main.6c849f44.css.map",
-    "main.19696070.js.map": "/smartagri/static/js/main.19696070.js.map"
+    "main.8a7f4d26.css.map": "/smartagri/static/css/main.8a7f4d26.css.map",
+    "main.935c1a70.js.map": "/smartagri/static/js/main.935c1a70.js.map"
   },
   "entrypoints": [
-    "static/css/main.6c849f44.css",
-    "static/js/main.19696070.js"
+    "static/css/main.8a7f4d26.css",
+    "static/js/main.935c1a70.js"
   ]
 }
