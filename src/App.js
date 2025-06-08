@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Thermometer, Droplet, Sprout, Search, Sun, Moon, Leaf, FlaskConical, Wheat, XCircle, Play, StopCircle, Trash2, Microscope } from 'lucide-react'; // Added Microscope icon
+import { Thermometer, Droplet, Sprout, Search, Sun, Moon, Leaf, FlaskConical, Wheat, XCircle, Play, StopCircle, Trash2, Microscope } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { getDatabase, ref, onValue, set } from 'firebase/database';
@@ -68,7 +68,7 @@ const getColorCode = (element, value, favorable) => {
 const initialSensorData = {
     temperature: { value: 26.6, unit: '°C', favorable: '21°C~37°C' },
     humidity: { value: 52.4, unit: '%', favorable: '60~80 %' },
-    soilMoisture: { value: 100, unit: '%', favorable: '70%-100%' }, // Updated favorable for initial
+    soilMoisture: { value: 100, unit: '%', favorable: '70%-100%' },
     nitrogen: { value: 106, unit: 'mg/kg', favorable: '10~50 mg/Kg' },
     phosphorus: { value: 2, unit: 'mg/kg', favorable: '15~73 mg/Kg' },
     potassium: { value: 10, unit: 'mg/kg', favorable: '101-150 mg/Kg' },
@@ -79,7 +79,7 @@ const cropFavorableData = {
     'Manual': {
         temperature: '21°C~37°C',
         humidity: '60~80 %',
-        soilMoisture: '70%-100%', // Updated favorable for Manual
+        soilMoisture: '70%-100%',
         nitrogen: '10~50 mg/Kg',
         phosphorus: '15~73 mg/Kg',
         potassium: '101-150 mg/Kg',
@@ -87,7 +87,7 @@ const cropFavorableData = {
     'Wheat': {
         temperature: '18°C~24°C',
         humidity: '50~70 %',
-        soilMoisture: '600-900', // This is still raw, assuming these are raw values from sensor
+        soilMoisture: '600-900',
         nitrogen: '50~100 mg/Kg',
         phosphorus: '20~40 mg/Kg',
         potassium: '80~120 mg/Kg',
@@ -408,7 +408,7 @@ const ResultPage = ({ onNavigate, isDarkMode, sensorData }) => {
     const [manualFavorableData, setManualFavorableData] = useState({
         temperature: '21°C~37°C',
         humidity: '60~80 %',
-        soilMoisture: '70%-100%', // Updated here
+        soilMoisture: '70%-100%',
         nitrogen: '10~50 mg/Kg',
         phosphorus: '15~73 mg/Kg',
         potassium: '101-150 mg/Kg',
@@ -465,61 +465,51 @@ const ResultPage = ({ onNavigate, isDarkMode, sensorData }) => {
         setSelectedCrop(event.target.value);
     };
 
-const getGeminiResponse = async (prompt, type) => {
-    if (type === 'soilHealth') setLoadingSoilHealth(true);
-    if (type === 'cropPrediction') setLoadingCropPrediction(true);
+    const getGeminiResponse = async (prompt, type) => {
+        if (type === 'soilHealth') setLoadingSoilHealth(true);
+        if (type === 'cropPrediction') setLoadingCropPrediction(true);
 
-    const apiKey = "AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE"; // Replace this with a working Gemini API key
-    if (!apiKey || apiKey.includes("AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE")) {
-        console.error("Gemini API key is missing or invalid.");
-        if (type === 'soilHealth') setSoilHealthSuggestion("API key is missing.");
-        if (type === 'cropPrediction') setCropPrediction("API key is missing.");
-        return;
-    }
-
-    try {
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-        const payload = {
-            contents: [
-                {
-                    role: "user",
-                    parts: [{ text: prompt }]
-                }
-            ]
-        };
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (response.status === 403) {
-            throw new Error("403 Forbidden: Check if your API key is valid and Gemini API is enabled in your Google Cloud project.");
+        const apiKey = "AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE"; // Replace this with a working Gemini API key
+        if (!apiKey || apiKey.includes("AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE")) {
+            console.error("Gemini API key is missing or invalid.");
+            if (type === 'soilHealth') setSoilHealthSuggestion("API key is missing.");
+            if (type === 'cropPrediction') setCropPrediction("API key is missing.");
+            return;
         }
 
-        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+        try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-        if (type === 'soilHealth') setSoilHealthSuggestion(text);
-        if (type === 'cropPrediction') setCropPrediction(text);
-    } catch (error) {
-        console.error("Gemini API error:", error);
-        const errorMessage = "Failed to fetch response from Gemini. Please check your API key and network.";
-        if (type === 'soilHealth') setSoilHealthSuggestion(errorMessage);
-        if (type === 'cropPrediction') setCropPrediction(errorMessage);
-    } finally {
-        if (type === 'soilHealth') setLoadingSoilHealth(false);
-        if (type === 'cropPrediction') setLoadingCropPrediction(false);
-    }
-};
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: prompt }]
+                    }
+                ]
+            };
 
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // This check ensures we only try to parse JSON if the response is OK
+            if (!response.ok) {
+                const errorBody = await response.text(); // Read error body as text
+                throw new Error(`HTTP error! status: ${response.status}, body: ${errorBody}`);
             }
+
+            const result = await response.json();
+
+            const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+
+            if (type === 'soilHealth') setSoilHealthSuggestion(text);
+            if (type === 'cropPrediction') setCropPrediction(text);
         } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            const errorMessage = "Error getting suggestions. Please check your network or try again later.";
+            console.error("Gemini API error:", error);
+            const errorMessage = `Failed to fetch response from Gemini. Error: ${error.message}. Please check your API key and network.`;
             if (type === 'soilHealth') setSoilHealthSuggestion(errorMessage);
             if (type === 'cropPrediction') setCropPrediction(errorMessage);
         } finally {
@@ -542,15 +532,15 @@ const getGeminiResponse = async (prompt, type) => {
 
     const handleGetCropPredictions = () => {
         setCropPrediction('');
-        const prompt = `Given the following soil and environmental parameters for growing ${selectedCrop === 'Manual' ? 'user-defined crop with custom favorable conditions' : selectedCrop}:
-        Temperature: ${localSensorData.temperature.value}${localSensorData.temperature.unit} (Favorable: ${localSensorData.temperature.favorable})
-        Humidity: ${localSensorData.humidity.value}${localSensorData.humidity.unit} (Favorable: ${localSensorData.humidity.favorable})
-        Soil Moisture: ${parseFloat(localSensorData.soilMoisture.value * 0.1).toFixed(1)}${localSensorData.soilMoisture.unit} (Favorable raw range: ${localSensorData.soilMoisture.favorable})
-        Nitrogen: ${localSensorData.nitrogen.value}${localSensorData.nitrogen.unit} (Favorable: ${localSensorData.nitrogen.favorable})
-        Phosphorus: ${localSensorData.phosphorus.value}${localSensorData.phosphorus.unit} (Favorable: ${localSensorData.phosphorus.favorable})
-        Potassium: ${localSensorData.potassium.value}${localSensorData.potassium.unit} (Favorable: ${localSensorData.potassium.favorable})
+        const prompt = `Based on the following current soil and environmental parameters:
+        Temperature: ${localSensorData.temperature.value}${localSensorData.temperature.unit}
+        Humidity: ${localSensorData.humidity.value}${localSensorData.humidity.unit}
+        Soil Moisture: ${parseFloat(localSensorData.soilMoisture.value * 0.1).toFixed(1)}${localSensorData.soilMoisture.unit}
+        Nitrogen: ${localSensorData.nitrogen.value}${localSensorData.nitrogen.unit}
+        Phosphorus: ${localSensorData.phosphorus.value}${localSensorData.phosphorus.unit}
+        Potassium: ${localSensorData.potassium.value}${localSensorData.potassium.unit}
 
-        Based on these parameters, list only the crops that can grow well in these conditions. Do not include explanations or suggestions for adjusting conditions. Just a comma-separated list of suitable crop names.`;
+        List only the crops that can grow well in these exact conditions. Do not include explanations or suggestions for adjusting conditions. Just a comma-separated list of suitable crop names.`;
         getGeminiResponse(prompt, 'cropPrediction');
     };
 
@@ -676,7 +666,6 @@ const getGeminiResponse = async (prompt, type) => {
                 </button>
             </div>
 
-            {/* Clear All Suggestions Button - Always visible on ResultPage */}
             {(soilHealthSuggestion || cropPrediction) && (
                 <div className="flex justify-center mb-4">
                     <button
@@ -732,8 +721,7 @@ function App() {
 
     // Initialize Firebase and authenticate
     useEffect(() => {
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart.agriculture';
-        const databaseURL = "https://smartagri-55783-default-rtdb.firebaseio.com"; // Directly use the provided host
+        const databaseURL = "https://smartagri-55783-default-rtdb.firebaseio.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAxePwB435GenxGgyZ3Mf6KSLOJAMtavZE",
@@ -742,14 +730,14 @@ function App() {
             projectId: "smartagri-55783",
             storageBucket: "smartagri-55783.appspot.com",
             messagingSenderId: "317181167730",
-            appId: "1:317181167730:android:c29397e546f004a9541aeb", // Use the app ID from your JSON
+            appId: "1:317181167730:android:c29397e546f004a9541aeb",
         };
 
         const app = initializeApp(firebaseConfig);
-        const realtimeDb = getDatabase(app); // Get Realtime Database instance
+        const realtimeDb = getDatabase(app);
         const firebaseAuth = getAuth(app);
 
-        setDb(realtimeDb); // Store Realtime Database instance
+        setDb(realtimeDb);
         setAuth(firebaseAuth);
 
         const unsubscribeAuth = onAuthStateChanged(firebaseAuth, async (user) => {
@@ -757,13 +745,10 @@ function App() {
                 setUserId(user.uid);
             } else {
                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(firebaseAuth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(firebaseAuth);
-                    }
+                    await signInAnonymously(firebaseAuth);
                 } catch (error) {
-                    console.error("Firebase anonymous sign-in failed:", error);
+                    console.error("Firebase authentication failed:", error);
+                    console.error("ACTION REQUIRED: Please ensure Firebase Authentication is enabled in your Firebase project console, and the 'Anonymous' sign-in provider is turned ON.");
                 }
             }
             setIsAuthReady(true);
@@ -776,18 +761,16 @@ function App() {
     useEffect(() => {
         if (!db || !isAuthReady) return;
 
-        // Path for sensor data in Realtime Database, based on your screenshot
         const sensorDataRef = ref(db, 'SmartAgri');
 
         const unsubscribeDb = onValue(sensorDataRef, (snapshot) => {
-            const fetchedData = snapshot.val(); // .val() for Realtime Database
+            const fetchedData = snapshot.val();
             if (fetchedData) {
                 setAppSensorData(prevData => {
                     const updatedData = { ...prevData };
-                    // Map keys from Firebase Realtime Database to app's state structure
                     updatedData.temperature.value = parseFloat(fetchedData.temperature) || 0;
                     updatedData.humidity.value = parseFloat(fetchedData.humidity) || 0;
-                    updatedData.soilMoisture.value = parseFloat(fetchedData.sms) || 0; // sms is raw value
+                    updatedData.soilMoisture.value = parseFloat(fetchedData.sms) || 0;
                     updatedData.nitrogen.value = parseFloat(fetchedData.nitro) || 0;
                     updatedData.phosphorus.value = parseFloat(fetchedData.phospho) || 0;
                     updatedData.potassium.value = parseFloat(fetchedData.potas) || 0;
@@ -795,23 +778,20 @@ function App() {
                 });
             } else {
                 console.log("No sensor data found at 'SmartAgri' in Realtime Database. Initializing with default values.");
-                // Set initial data if the path doesn't exist, using the RTDB keys
-                set(sensorDataRef, { // Use set() for Realtime Database
+                set(sensorDataRef, {
                     temperature: initialSensorData.temperature.value,
                     humidity: initialSensorData.humidity.value,
-                    sms: initialSensorData.soilMoisture.value, // sms for soil moisture (raw)
-                    nitro: initialSensorData.nitrogen.value,   // nitro for nitrogen
-                    phospho: initialSensorData.phosphorus.value, // phospho for phosphorus
-                    potas: initialSensorData.potassium.value,  // potas for potassium
-                    // You can add 'k', 'm', 'n' here if they are meant to be part of the initial data
-                    // k: "0", m: "0", n: "0"
+                    sms: initialSensorData.soilMoisture.value,
+                    nitro: initialSensorData.nitrogen.value,
+                    phospho: initialSensorData.phosphorus.value,
+                    potas: initialSensorData.potassium.value,
                 }).catch(e => console.error("Error setting initial sensor data to Realtime Database:", e));
             }
         }, (error) => {
             console.error("Error fetching real-time sensor data from Realtime Database:", error);
         });
 
-        return () => unsubscribeDb(); // Cleanup listener on component unmount
+        return () => unsubscribeDb();
     }, [db, isAuthReady]);
 
 
