@@ -473,7 +473,7 @@ const ResultPage = ({ onNavigate, isDarkMode, sensorData }) => {
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            const apiKey = "";
+            const apiKey = "AIzaSyAjMlDat3KcyvIxnq6jJxFe9kP8ealzyyE";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
