@@ -469,8 +469,8 @@ const getGeminiResponse = async (prompt, type) => {
     if (type === 'soilHealth') setLoadingSoilHealth(true);
     if (type === 'cropPrediction') setLoadingCropPrediction(true);
 
-    const apiKey = "AIzaSyC_ZxGxwNik91RNuuQ15waG3Vo6lrefrQc"; // Replace this with a working Gemini API key
-    if (!apiKey || apiKey.includes("AIzaSyC_ZxGxwNik91RNuuQ15waG3Vo6lrefrQc")) {
+    const apiKey = "AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE"; // Replace this with a working Gemini API key
+    if (!apiKey || apiKey.includes("AIzaSyC5Ruf8BpOn7crYrKtuiGq8f79DaSLU2gE")) {
         console.error("Gemini API key is missing or invalid.");
         if (type === 'soilHealth') setSoilHealthSuggestion("API key is missing.");
         if (type === 'cropPrediction') setCropPrediction("API key is missing.");
